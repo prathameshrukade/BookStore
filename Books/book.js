@@ -3,34 +3,24 @@ const router= express.Router();
 const db=require("../db");
 
 
-router.get('/books', async(req, res)=>{
 
-try{
 
+router.get('/', async (req, res) => {
     const [rows] = await db.query('SELECT * FROM books');
     res.json(rows);
-
-}catch(err){
-    res.status(500).json({ error: err.message });
-}
-
 });
 
-
-router.get('/books/:id', async (req, res) => {
-    try {
-        const [rows] = await db.query("SELECT * FROM books WHERE id = ?", [req.params.id]);
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "Book not found" });
-        }
-        res.json(rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+router.get('/:id', async (req, res) => {
+    const [rows] = await db.query('SELECT * FROM books WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) {
+        return res.status(404).json({ message: "Book not found" });
     }
+    res.json(rows[0]);
 });
 
 
-router.post('/books', async (req, res) => {
+
+router.post('/', async (req, res) => {
     const { title, author_id, category_id, price, stock, description } = req.body;
 
     if (!title || !author_id || !category_id || !price || !stock) {
@@ -49,7 +39,7 @@ router.post('/books', async (req, res) => {
     }
 });
 
-router.put('/books', async (req, res) => {
+router.put('/', async (req, res) => {
     const id = req.query.id;
     const {  title, author_id, category_id, price, stock, description } = req.body;
 
@@ -74,7 +64,7 @@ router.put('/books', async (req, res) => {
 
 
 
-router.delete('/books', async (req, res) => {
+router.delete('/', async (req, res) => {
     const id = req.query.id;
 
     if (!id) {
@@ -94,5 +84,6 @@ router.delete('/books', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 module.exports = router;
